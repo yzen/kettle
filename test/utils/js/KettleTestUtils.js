@@ -299,8 +299,9 @@ fluid.defaults("kettle.tests.testEnvironment", {
     gradeNames: ["fluid.test.testEnvironment", "autoInit"]
 });
 
-kettle.tests.buildTestCase = function (configurationName, testDef) {
+kettle.tests.moduleSource = function (testDef) {
     var sequence = fluid.copy(testDef.sequence);
+
     sequence.unshift({
         func: "{tests}.events.applyConfiguration.fire"
     }, {
@@ -315,15 +316,22 @@ kettle.tests.buildTestCase = function (configurationName, testDef) {
         listener: "fluid.identity"
     });
 
-    testDef.configurationName = configurationName;
-    testDef.modules = [{
-        name: configurationName + " tests.",
-        tests: [{
+    return {
+        name: testDef.configurationName + " tests.",
+        tests: {
             name: testDef.name,
             expect: testDef.expect,
             sequence: sequence
-        }]
-    }];
+        }
+    };
+};
+
+kettle.tests.buildTestCase = function (configurationName, testDef) {
+    testDef.configurationName = configurationName;
+    testDef.moduleSource = {
+        funcName: "kettle.tests.moduleSource",
+        args: "{kettle.tests.testCaseHolder}.options"
+    };
     return testDef;
 };
 
