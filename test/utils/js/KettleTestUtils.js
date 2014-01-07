@@ -272,6 +272,9 @@ fluid.defaults("kettle.tests.configuration", {
 
 fluid.defaults("kettle.tests.testCaseHolder", {
     gradeNames: ["autoInit", "fluid.test.testCaseHolder"],
+    mergePolicy: {
+        sequence: "noexpand"
+    },
     events: {
         applyConfiguration: null,
         onServerReady: null
@@ -300,7 +303,7 @@ fluid.defaults("kettle.tests.testEnvironment", {
 });
 
 kettle.tests.moduleSource = function (testDef) {
-    var sequence = fluid.copy(testDef.sequence);
+    var sequence = testDef.sequence;
 
     sequence.unshift({
         func: "{tests}.events.applyConfiguration.fire"
